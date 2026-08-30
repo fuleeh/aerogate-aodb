@@ -4,18 +4,16 @@ A scheduler-driven airport gate allocation system built with Laravel and Postgre
 
 The project is under active implementation. Its requirements, architecture, and trade-offs are documented in [`docs/`](docs/).
 
-## Current development requirements
+## Development requirements
 
-- PHP 8.3 or newer
-- Composer 2
+- Docker with Docker Compose
+- Make
 
-## Verify the scaffold
+## Setup
 
 ```bash
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan test
+make setup
+make test
 ```
 
-The next milestone adds the reproducible Docker and PostgreSQL development environment.
+Run `make help` to list the available development commands.
