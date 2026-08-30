@@ -160,13 +160,13 @@ The exact use of `FOR UPDATE SKIP LOCKED` will be verified against real PostgreS
 
 ```text
 Docker Compose
-├── app: Laravel CLI/application runtime
+├── app: custom Laravel CLI/application runtime
 └── postgres: authoritative PostgreSQL database
 ```
 
 Commands are run manually for a deterministic demonstration. Laravel's schedule definition is inspectable with `schedule:list` and executable with `schedule:run`.
 
-Redis, Horizon, and cloud services are excluded until a demonstrated requirement justifies them.
+The local image remains deliberately small and is not presented as the final production deployment design. Redis, Horizon, and cloud services are excluded until a demonstrated requirement justifies them.
 
 ## 10. Production evolution
 
@@ -198,4 +198,3 @@ CAP is applied per distributed workflow, not as a label on Laravel or PostgreSQL
 ## 12. Human and disruption boundaries
 
 Production automation must not silently fight operators. Manual locks and overrides require actor, reason, timestamp, versioning, and audit history. Maintenance extensions should detect impacted allocations, preserve frozen or manually locked decisions, and produce bounded reallocation proposals or operator escalation rather than an uncontrolled cascade.
-

@@ -50,19 +50,19 @@ This is a living, concise decision record. Each decision states its cost and the
 
 **Reconsider when:** Database portability becomes a genuine requirement and an equally safe serialization mechanism is designed and tested.
 
-## ADR-004 — Use Docker for the local runtime
+## ADR-004 — Use a minimal custom Docker environment
 
 **Status:** Accepted
 
 **Context:** Reviewers need a deterministic setup with the same database capabilities used by production-oriented code.
 
-**Decision:** Provide a small Docker Compose topology containing the Laravel runtime and PostgreSQL.
+**Decision:** Provide a small Docker Compose topology containing a custom Laravel runtime and PostgreSQL.
 
-**Why:** It standardizes PHP extensions, database version, and commands without requiring cloud dependencies.
+**Why:** The two-service topology is explicit, easy to explain, and contains only what the challenge uses. It standardizes PHP extensions and the database version without cloud dependencies.
 
 **Alternatives:** Host-installed PHP/PostgreSQL; Laravel Sail; a larger production-like stack.
 
-**Trade-offs:** Docker adds build time and requires Docker Desktop or an equivalent runtime.
+**Trade-offs:** We own a small amount of container configuration and must maintain it as PHP requirements change. Docker adds build time and requires Docker Desktop or an equivalent runtime.
 
 **Reconsider when:** The target review environment prohibits Docker or the project adopts a standardized company development environment.
 
@@ -145,4 +145,3 @@ This is a living, concise decision record. Each decision states its cost and the
 **Trade-offs:** The allocation write path sacrifices availability during loss of authoritative connectivity.
 
 **Reconsider when:** Ownership can be partitioned into non-overlapping gate schedules with a single authority per partition.
-
