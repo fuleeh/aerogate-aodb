@@ -31,7 +31,8 @@ RUN composer install \
     --classmap-authoritative \
     --no-interaction \
     --no-scripts \
-    --prefer-dist
+    --prefer-dist \
+    && chown -R app:app /var/www/html/vendor
 
 COPY --chown=app:app . .
 

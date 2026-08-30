@@ -33,6 +33,7 @@ services:
     ports:
       - "${FORWARD_DB_PORT:-5432}:5432"
     volumes:
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
       - postgres_data:/var/lib/postgresql/data
 
 volumes:

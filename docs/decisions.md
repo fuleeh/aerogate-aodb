@@ -145,3 +145,19 @@ This is a living, concise decision record. Each decision states its cost and the
 **Trade-offs:** The allocation write path sacrifices availability during loss of authoritative connectivity.
 
 **Reconsider when:** Ownership can be partitioned into non-overlapping gate schedules with a single authority per partition.
+
+## ADR-010 — Enforce quality before domain implementation
+
+**Status:** Accepted
+
+**Context:** Correctness-sensitive allocation code benefits from fast feedback beyond runtime tests, and adding rules after domain implementation creates avoidable cleanup.
+
+**Decision:** Use strict types, PSR-12 through Laravel Pint, Larastan/PHPStan at level 8 without a generated baseline, and PHPUnit. Expose one aggregate quality command.
+
+**Why:** The tools cover complementary risks: formatting consistency, type/data-flow defects, and behavioral correctness. Introducing them before domain code prevents gradual standards drift.
+
+**Alternatives:** PHP-CS-Fixer directly; PHP_CodeSniffer; Psalm; tests alone; maximum PHPStan strictness immediately.
+
+**Trade-offs:** Analysis and formatting add build time, and framework-aware static analysis occasionally requires precise PHPDoc. Level 8 is strict without forcing premature workarounds for every implicit mixed boundary.
+
+**Reconsider when:** The codebase can move to a higher level without suppressions, or company-wide tooling mandates a different formatter or analyser.
