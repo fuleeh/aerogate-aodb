@@ -114,6 +114,20 @@ final class OpenSkyFlightProviderTest extends TestCase
         Http::assertSentCount(2);
     }
 
+    public function test_timeout_is_retried_and_classified_deterministically(): void
+    {
+        Http::fakeSequence()
+            ->pushFailedConnection('Operation timed out')
+            ->pushFailedConnection('Operation timed out');
+
+        $exception = $this->captureFailure(
+            fn (): iterable => $this->provider(attempts: 2)->arrivals($this->arrivalQuery()),
+        );
+
+        $this->assertSame(FlightProviderFailure::Unavailable, $exception->reason);
+        Http::assertSentCount(2);
+    }
+
     public function test_malformed_batch_is_classified(): void
     {
         Http::fake(['*' => Http::response(['flights' => []], 200)]);

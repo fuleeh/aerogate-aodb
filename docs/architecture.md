@@ -147,6 +147,8 @@ Database constraints prevent known invalid writes. Auditing detects stale state,
 
 Allocation executes in a short transaction. The flight row is locked for idempotency, and one eligible gate is selected with `FOR UPDATE SKIP LOCKED`. PostgreSQL range queries detect conflicts, while the GiST exclusion constraint authoritatively prevents overlapping active allocations. Exclusion conflicts are retried as complete rolled-back operations with a fixed bound.
 
+The integration suite synchronizes separate PHP processes with independent PostgreSQL connections to verify one-gate contention and duplicate-flight delivery. It also forces PostgreSQL `23P01` conflicts to prove the three-attempt bound. These focused tests do not replace sustained load, crash-recovery, or network-partition testing.
+
 ## 9. Local topology
 
 ```text
