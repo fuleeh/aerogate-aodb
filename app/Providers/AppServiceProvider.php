@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Contracts\FlightProviders\FlightProvider;
 use App\Domain\Allocations\OccupancyWindowPolicy;
+use App\Infrastructure\FlightProviders\OpenSky\OpenSkyConfiguration;
+use App\Infrastructure\FlightProviders\OpenSky\OpenSkyFlightProvider;
 use Illuminate\Support\ServiceProvider;
 use LogicException;
 
@@ -15,6 +18,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(OpenSkyConfiguration::class, static function (): OpenSkyConfiguration {
+            $configuration = config('services.opensky');
+
+            if (! is_array($configuration)) {
+                throw new LogicException('OpenSky configuration is missing.');
+            }
+
+            return OpenSkyConfiguration::fromArray($configuration);
+        });
+
+        $this->app->singleton(FlightProvider::class, OpenSkyFlightProvider::class);
+
         $this->app->singleton(
             OccupancyWindowPolicy::class,
             static function (): OccupancyWindowPolicy {

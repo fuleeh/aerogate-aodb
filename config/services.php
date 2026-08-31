@@ -37,4 +37,18 @@ return [
         ],
     ],
 
+    'opensky' => [
+        'base_url' => env('OPENSKY_BASE_URL', 'https://opensky-network.org/api'),
+        'token_url' => env(
+            'OPENSKY_TOKEN_URL',
+            'https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token',
+        ),
+        'client_id' => env('OPENSKY_CLIENT_ID'),
+        'client_secret' => env('OPENSKY_CLIENT_SECRET'),
+        'connect_timeout_seconds' => env('OPENSKY_CONNECT_TIMEOUT_SECONDS', 5),
+        'request_timeout_seconds' => env('OPENSKY_REQUEST_TIMEOUT_SECONDS', 15),
+        'http_attempts' => env('OPENSKY_HTTP_ATTEMPTS', 3),
+        'retry_delay_milliseconds' => env('OPENSKY_RETRY_DELAY_MILLISECONDS', 250),
+    ],
+
 ];

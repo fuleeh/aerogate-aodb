@@ -8,6 +8,7 @@ use App\Contracts\FlightProviders\ArrivalQuery;
 use App\Contracts\FlightProviders\ExternalFlightData;
 use App\Contracts\FlightProviders\FlightProvider;
 use App\Contracts\FlightProviders\FlightProviderException;
+use App\Enums\FlightProviderFailure;
 
 final class FakeFlightProvider implements FlightProvider
 {
@@ -30,7 +31,7 @@ final class FakeFlightProvider implements FlightProvider
 
     public static function failing(string $message = 'Flight provider request failed.'): self
     {
-        return new self([], new FlightProviderException($message));
+        return new self([], new FlightProviderException(FlightProviderFailure::Unavailable, $message));
     }
 
     public function arrivals(ArrivalQuery $query): iterable

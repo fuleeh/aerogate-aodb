@@ -8,6 +8,7 @@ use App\Contracts\FlightProviders\ArrivalQuery;
 use App\Contracts\FlightProviders\ExternalFlightData;
 use App\Contracts\FlightProviders\FlightProviderException;
 use App\Domain\Flights\AirportIcao;
+use App\Enums\FlightProviderFailure;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -40,10 +41,13 @@ final class FlightProviderContractTest extends TestCase
     {
         $provider = FakeFlightProvider::failing('OpenSky unavailable.');
 
-        $this->expectException(FlightProviderException::class);
-        $this->expectExceptionMessage('OpenSky unavailable.');
-
-        iterator_to_array($provider->arrivals($this->query()));
+        try {
+            iterator_to_array($provider->arrivals($this->query()));
+            $this->fail('Expected the fake provider to fail.');
+        } catch (FlightProviderException $exception) {
+            $this->assertSame(FlightProviderFailure::Unavailable, $exception->reason);
+            $this->assertSame('OpenSky unavailable.', $exception->getMessage());
+        }
     }
 
     public function test_airport_codes_are_normalized(): void

@@ -73,6 +73,7 @@ Artisan commands validate invocation parameters, acquire run-level protection, i
 ### Infrastructure layer
 
 - The OpenSky adapter translates provider-specific HTTP payloads and failures into internal data and exceptions.
+- OpenSky's arrivals endpoint is batch-updated nightly; it is a demonstration provider, not a real-time operational AODB feed.
 - Eloquent and focused PostgreSQL queries persist state.
 - PostgreSQL constraints provide the final protection for cross-process invariants.
 
