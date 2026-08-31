@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Application\Ingestion\FlightIngestionConfiguration;
 use App\Contracts\FlightProviders\FlightProvider;
 use App\Domain\Allocations\OccupancyWindowPolicy;
 use App\Infrastructure\FlightProviders\OpenSky\OpenSkyConfiguration;
@@ -21,6 +22,19 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(ClockInterface::class, SystemClock::class);
+
+        $this->app->singleton(
+            FlightIngestionConfiguration::class,
+            static function (): FlightIngestionConfiguration {
+                $configuration = config('aerogate.ingestion');
+
+                if (! is_array($configuration)) {
+                    throw new LogicException('Flight ingestion configuration is missing.');
+                }
+
+                return FlightIngestionConfiguration::fromArray($configuration);
+            },
+        );
 
         $this->app->singleton(OpenSkyConfiguration::class, static function (): OpenSkyConfiguration {
             $configuration = config('services.opensky');

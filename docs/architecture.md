@@ -62,7 +62,7 @@ OpenSky HTTP API
 
 ### Delivery layer
 
-Artisan commands validate invocation parameters, acquire run-level protection, invoke one application use case, render a concise summary, and return a meaningful exit code.
+Artisan commands invoke one application use case, render a concise summary, and return a meaningful exit code. Scheduled delivery adds cache-backed overlap and single-server guards; direct command invocation still relies on idempotent processing and database invariants for correctness.
 
 ### Application layer
 
