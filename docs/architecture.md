@@ -4,7 +4,7 @@
 
 Use a pragmatic Laravel modular monolith with PostgreSQL as the authoritative datastore. Keep delivery mechanisms and external integrations at the edges, business workflows explicit, and safety invariants enforced as close to the data as practical.
 
-The architecture optimizes first for correctness, deterministic local execution, and explainability. Production scaling paths are identified but are not local runtime dependencies.
+The architecture optimizes first for correctness, deterministic local execution, and explainability.
 
 ## 2. From requirements to design
 
@@ -29,11 +29,11 @@ A normalized arrival observed through an external provider. It owns provider ide
 
 ### Gate
 
-A physical resource that can receive allocations. It owns a stable code, global active state, deterministic selection order, and later may own compatibility attributes.
+A physical resource that can receive allocations. It owns a stable code, global active state, and deterministic selection order.
 
 ### Gate allocation
 
-The authoritative decision that a flight occupies a gate during a time range. It records the assignment source and decision state in addition to the flight, gate, and occupancy period.
+The authoritative decision that a flight occupies a gate during a time range. It records the flight, gate, occupancy period, and lifecycle status.
 
 ### Gate unavailability
 
@@ -144,17 +144,7 @@ Database constraints prevent known invalid writes. Auditing detects stale state,
 
 ## 8. Concurrency and correctness
 
-Application-level `check then insert` is unsafe because multiple workers may observe the same gate as free.
-
-The intended defense is layered:
-
-1. Keep the candidate-selection transaction short.
-2. Lock candidate gate rows so competing workers do not choose the same resource unnecessarily.
-3. Use PostgreSQL range-overlap queries with half-open UTC intervals.
-4. Enforce non-overlapping gate allocations with a GiST exclusion constraint.
-5. Recognize constraint conflicts and retry only when doing so is safe and bounded.
-
-The exact use of `FOR UPDATE SKIP LOCKED` will be verified against real PostgreSQL behavior. It is a throughput mechanism, not a replacement for the database invariant.
+Allocation executes in a short transaction. The flight row is locked for idempotency, and one eligible gate is selected with `FOR UPDATE SKIP LOCKED`. PostgreSQL range queries detect conflicts, while the GiST exclusion constraint authoritatively prevents overlapping active allocations. Exclusion conflicts are retried as complete rolled-back operations with a fixed bound.
 
 ## 9. Local topology
 
@@ -166,7 +156,7 @@ Docker Compose
 
 Commands are run manually for a deterministic demonstration. Laravel's schedule definition is inspectable with `schedule:list` and executable with `schedule:run`.
 
-The local image remains deliberately small and is not presented as the final production deployment design. Redis, Horizon, and cloud services are excluded until a demonstrated requirement justifies them.
+The local runtime intentionally contains only the application and its authoritative PostgreSQL datastore.
 
 ## 10. Production evolution
 
@@ -189,12 +179,8 @@ Stateless Laravel workers ─────► authoritative PostgreSQL writer
 
 ## 11. Partition behavior
 
-CAP is applied per distributed workflow, not as a label on Laravel or PostgreSQL:
+CAP is applied per distributed workflow:
 
 - Gate allocation favors consistency during a partition. If authoritative state is unreachable, the system leaves work pending rather than confirming a potentially conflicting assignment.
 - Ingestion buffering, logs, and metrics may favor availability and reconcile later.
-- The local single-writer topology is a non-partitioned transactional system; it does not claim continued availability through a database partition.
-
-## 12. Human and disruption boundaries
-
-Production automation must not silently fight operators. Manual locks and overrides require actor, reason, timestamp, versioning, and audit history. Maintenance extensions should detect impacted allocations, preserve frozen or manually locked decisions, and produce bounded reallocation proposals or operator escalation rather than an uncontrolled cascade.
+- The local topology uses one authoritative transactional database.
