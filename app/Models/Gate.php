@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\GateAllocationStatus;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -25,6 +26,12 @@ final class Gate extends Model
     public function unavailabilities(): HasMany
     {
         return $this->hasMany(GateUnavailability::class);
+    }
+
+    /** @return HasMany<GateAllocation, $this> */
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(GateAllocation::class);
     }
 
     /**
@@ -59,6 +66,15 @@ final class Gate extends Model
                     "unavailability_period && tstzrange(?, ?, '[)')",
                     [$startsAt, $endsAt],
                 ),
+            )
+            ->whereDoesntHave(
+                'allocations',
+                static fn (Builder $allocations): Builder => $allocations
+                    ->where('status', GateAllocationStatus::Active)
+                    ->whereRaw(
+                        "occupancy_period && tstzrange(?, ?, '[)')",
+                        [$startsAt, $endsAt],
+                    ),
             )
             ->orderBy('allocation_priority')
             ->orderBy('id');
