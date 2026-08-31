@@ -10,6 +10,8 @@ use App\Infrastructure\FlightProviders\OpenSky\OpenSkyConfiguration;
 use App\Infrastructure\FlightProviders\OpenSky\OpenSkyFlightProvider;
 use Illuminate\Support\ServiceProvider;
 use LogicException;
+use Psr\Clock\ClockInterface;
+use App\Infrastructure\Time\SystemClock;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,6 +20,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(ClockInterface::class, SystemClock::class);
+
         $this->app->singleton(OpenSkyConfiguration::class, static function (): OpenSkyConfiguration {
             $configuration = config('services.opensky');
 
