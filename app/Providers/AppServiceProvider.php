@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Application\Auditing\AllocationAuditConfiguration;
 use App\Application\Ingestion\FlightIngestionConfiguration;
 use App\Contracts\FlightProviders\FlightProvider;
 use App\Domain\Allocations\OccupancyWindowPolicy;
@@ -22,6 +23,19 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(ClockInterface::class, SystemClock::class);
+
+        $this->app->singleton(
+            AllocationAuditConfiguration::class,
+            static function (): AllocationAuditConfiguration {
+                $configuration = config('aerogate.audit');
+
+                if (! is_array($configuration)) {
+                    throw new LogicException('Allocation audit configuration is missing.');
+                }
+
+                return AllocationAuditConfiguration::fromArray($configuration);
+            },
+        );
 
         $this->app->singleton(
             FlightIngestionConfiguration::class,

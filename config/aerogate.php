@@ -10,4 +10,8 @@ return [
         'query_window_minutes' => env('FLIGHT_QUERY_WINDOW_MINUTES', 120),
         'query_delay_minutes' => env('FLIGHT_QUERY_DELAY_MINUTES', 1_440),
     ],
+
+    'audit' => [
+        'stale_unassigned_after_minutes' => env('AUDIT_STALE_UNASSIGNED_AFTER_MINUTES', 15),
+    ],
 ];

@@ -9,3 +9,9 @@ Schedule::command('flights:fetch-and-allocate')
     ->everyFiveMinutes()
     ->withoutOverlapping(15)
     ->onOneServer();
+
+Schedule::command('flights:audit')
+    ->name('allocation-audit')
+    ->everyFiveMinutes()
+    ->withoutOverlapping(10)
+    ->onOneServer();

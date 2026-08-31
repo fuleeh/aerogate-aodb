@@ -133,12 +133,12 @@ Independent scheduler tick
 Audit current authoritative state
     ├── allocated and unassigned flights
     ├── free, occupied, inactive, and unavailable gates
-    ├── stale pending flights
+    ├── stale unassigned flights
     ├── allocations conflicting with changed restrictions
     └── recent processing failures where recorded
     │
     ▼
-Structured report, logs, and production alert hooks
+Structured console report and logs
 ```
 
 Database constraints prevent known invalid writes. Auditing detects stale state, changed business facts, integration failures, and rules that are not suitable for a simple constraint.
