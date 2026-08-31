@@ -89,7 +89,7 @@ FlightProvider.arrivals(airport, time window) → iterable<ExternalFlightData>
 The occupancy policy isolates the challenge's current time-window rule from possible future arrival/departure semantics:
 
 ```text
-OccupancyWindowPolicy.for(flight) → OccupancyWindow
+OccupancyWindowPolicy.forFirstObservation(timestamp) → OccupancyWindow
 ```
 
 Expected business outcomes use typed results and reason codes. Infrastructure failures use exceptions. `NO_GATE_AVAILABLE` is a result, not an exception.
