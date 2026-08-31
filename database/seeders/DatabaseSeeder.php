@@ -10,6 +10,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Domain seeders are registered as their models are introduced.
+        $this->call(GateSeeder::class);
     }
 }
