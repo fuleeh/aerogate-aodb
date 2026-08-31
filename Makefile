@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help setup build up down logs install test analyse format lint quality db-migrate db-fresh schedule-list
+.PHONY: help setup build up down logs install test analyse format lint quality demo ingest audit db-migrate db-fresh schedule-list
 
 help: ## List available commands
 	@awk 'BEGIN {FS = ":.*## "; printf "Usage: make <target>\n\n"} /^[a-zA-Z_-]+:.*## / {printf "  %-16s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -41,6 +41,16 @@ lint: ## Check PHP formatting
 
 quality: ## Run formatting, static analysis, and tests
 	docker compose exec app composer quality
+
+demo: ## Run the deterministic offline workflow demonstration
+	docker compose exec app php artisan test --filter='FlightIngestionServiceTest|AllocationAuditServiceTest'
+	docker compose exec app php artisan schedule:list
+
+ingest: ## Fetch configured arrivals and allocate them to gates
+	docker compose exec app php artisan flights:fetch-and-allocate
+
+audit: ## Report allocation statistics and anomalies
+	docker compose exec app php artisan flights:audit
 
 db-migrate: ## Apply pending database migrations
 	docker compose exec app php artisan migrate

@@ -122,7 +122,7 @@ Transactionally select and lock an eligible gate
     └── none found → record reason → UNASSIGNED
 ```
 
-A failed provider request never becomes an empty successful batch. Item-level malformed data and batch-level failures will be distinguished explicitly.
+A failed provider request never becomes an empty successful batch. Malformed batch and item failures have distinct reason codes, and item failures include their source index; the OpenSky adapter validates the response before ingestion begins.
 
 ## 7. Audit flow
 
@@ -134,14 +134,13 @@ Audit current authoritative state
     ├── allocated and unassigned flights
     ├── free, occupied, inactive, and unavailable gates
     ├── stale unassigned flights
-    ├── allocations conflicting with changed restrictions
-    └── recent processing failures where recorded
+    └── allocations conflicting with changed restrictions
     │
     ▼
 Structured console report and logs
 ```
 
-Database constraints prevent known invalid writes. Auditing detects stale state, changed business facts, integration failures, and rules that are not suitable for a simple constraint.
+Database constraints prevent known invalid writes. Auditing detects stale state, changed business facts, and rules that are not suitable for a simple constraint. Integration failures are emitted through structured command logs rather than reconstructed by the database audit.
 
 ## 8. Concurrency and correctness
 

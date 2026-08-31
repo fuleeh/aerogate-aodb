@@ -63,7 +63,7 @@ The solution must be easy to run locally, correct under repeated or concurrent p
 | INV-01 | Allocations for the same gate must never overlap. |
 | INV-02 | A flight must not have more than one active allocation. |
 | INV-03 | Every occupancy and unavailability interval must have `start < end`. |
-| INV-04 | An allocation must not overlap an active gate-unavailability interval. |
+| INV-04 | A new allocation must not overlap a known gate-unavailability interval; restrictions added later are detected by audit. |
 | INV-05 | Only active gates satisfying all known compatibility rules are eligible. |
 | INV-06 | Reprocessing the same external flight must preserve one logical flight record. |
 | INV-07 | An allocation is confirmed only after its authoritative database transaction commits. |
